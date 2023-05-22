@@ -1,10 +1,14 @@
 *{
  box-sizing: border-box;
- background-color: #07485B;
- color: white;
+ /* background-color: #07485B; */
+ /* color: white; */
+}
+body{
+  background-color: #07485B;
+  color: white;
 }
 .App{
- max-width: 360px;
+ max-width: 400px;
  margin: 30px auto;
 }
 .App h1{
@@ -65,3 +69,11 @@ form button{
   color: rgb(78, 236, 78);
 }
 
+.input-vaidation{
+  position: absolute;
+  margin-left: 120px;
+  color: red;
+  font-size: 11px;
+  margin-top: 10px;
+   
+}

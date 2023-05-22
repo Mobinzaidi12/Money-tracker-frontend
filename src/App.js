@@ -1,23 +1,82 @@
 import "./App.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getData, postData } from "./backend";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const [name, setName] = useState("");
+  const [itemName, setItemsName] = useState("");
   const [datetime, setDateTime] = useState("");
   const [description, setDescription] = useState("");
+  const [error, setError] = useState(false);
+  const [data, setData] = useState([]);
+  const [amount, setAmount] = useState(0)
+
+  useEffect(() => {
+    getDataUse();
+  }, []);
+
+  const addData = async (e) => {
+    e.preventDefault();
+    const price = itemName.split(" ")[0];
+    if (!itemName || !price || !datetime || !description) {
+      setError(true);
+      toast.error("Please provide complete information");
+      return;
+    }
+
+    console.log(itemName, price, datetime, description);
+
+    const isCreated = await postData(itemName, price, datetime, description);
+
+    if (!isCreated) {
+      setError(true);
+      return;
+    }
+
+    setItemsName("");
+    setDateTime("");
+    setDescription("");
+    toast.success("Created successfully");
+    getDataUse();
+  };
+
+
+  const updateTotalAmount = () => {
+    const total = data.reduce((pre, currentValue) => {
+      return pre + currentValue.price
+    }, 0
+    );
+    setAmount(total)
+  }
+
+
+
+  const getDataUse = async () => {
+    const isShow = await getData();
+    setData(isShow.data);
+    updateTotalAmount();
+
+  };
+
+
+
+
+
+
 
   return (
     <div className="App">
       <h1>
-        5000<span>.00</span>
+        {amount}<span>.00</span>
       </h1>
       <form>
         <div className="basic">
           <input
             type="text"
-            placeholder="Enter Expanse"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            placeholder="Enter Expense"
+            value={itemName}
+            onChange={(e) => setItemsName(e.target.value)}
           />
           <input
             type="datetime-local"
@@ -33,40 +92,32 @@ function App() {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <button type="submit">Add Items</button>
+        <button type="submit" onClick={addData}>
+          Add Items
+        </button>
       </form>
-      <div className="transactions">
-        <div className="transaction">
-          <div className="left">
-            <div className="name">sumsung LCDs</div>
-            <div className="description">It was time for new TV</div>
-          </div>
-          <div className="right">
-            <div className="price red">-560</div>
-            <div className="datetime">2023-2-1 15:46</div>
-          </div>
-        </div>
-        <div className="transaction">
-          <div className="left">
-            <div className="name">Iphone 13</div>
-            <div className="description">It was time for new Phone</div>
-          </div>
-          <div className="right">
-            <div className="price green">560</div>
-            <div className="datetime">2023-2-1 15:46</div>
-          </div>
-        </div>
-        <div className="transaction">
-          <div className="left">
-            <div className="name">Hp Laptop</div>
-            <div className="description">It was time for new Laptop</div>
-          </div>
-          <div className="right">
-            <div className="price red">-560</div>
-            <div className="datetime">2023-2-1 15:46</div>
-          </div>
-        </div>
+      <div>
+        {error && (!itemName || !datetime || !description) && (
+          <span className="input-validation">Please provide complete information</span>
+        )}
       </div>
+      {data.length > 0 &&
+        data.map((item, index) => (
+          <div key={index} className="transactions">
+            <div className="transaction">
+              <div className="left">
+                <div className="name">{item.itemName}</div>
+                <div className="description">{item.description}</div>
+              </div>
+              <div className="right">
+                <div className={`price ${item.price < 0 ? "red" : "green"}`}>{item.price}</div>
+                <div className="datetime">{item.datetime}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+
+      <ToastContainer />
     </div>
   );
 }
