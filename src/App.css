@@ -32,13 +32,24 @@ form .basic{
 
 form button{
   width: 100%;
-  padding: 5px;
-  margin-top: 10px;
+  padding: 10px;
   background-color: #DB073D;
   border-radius: 5px;
   border: none;
   font-size: 2.2vh;
+  font-weight: bold;
+  color:#8EC7D2;
+  
 }
+.action-button{
+  display: flex;
+  margin-top: 10px;
+  justify-items: stretch;
+  width: 100%;
+  column-gap: 10px;
+}
+
+
 .transactions{
   margin-top: 20px;
 }

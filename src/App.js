@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import { getData, postData } from "./backend";
+import { getData, postData, deleteData } from "./backend";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -10,7 +10,8 @@ function App() {
   const [description, setDescription] = useState("");
   const [error, setError] = useState(false);
   const [data, setData] = useState([]);
-  const [amount, setAmount] = useState(0)
+  const [amount, setAmount] = useState(0);
+
 
   useEffect(() => {
     getDataUse();
@@ -41,28 +42,25 @@ function App() {
     getDataUse();
   };
 
-
-  const updateTotalAmount = () => {
-    const total = data.reduce((pre, currentValue) => {
+  const updateTotalAmount = (d) => {
+    const total = d.reduce((pre, currentValue) => {
       return pre + currentValue.price
     }, 0
     );
     setAmount(total)
   }
 
-
-
   const getDataUse = async () => {
     const isShow = await getData();
     setData(isShow.data);
-    updateTotalAmount();
-
+    updateTotalAmount(isShow.data);
   };
 
 
-
-
-
+  const clearHandler = async () => {
+    await deleteData();
+    getDataUse();
+  }
 
 
   return (
@@ -92,9 +90,14 @@ function App() {
             onChange={(e) => setDescription(e.target.value)}
           />
         </div>
-        <button type="submit" onClick={addData}>
-          Add Items
-        </button>
+        <div className="action-button">
+          <button type="submit" onClick={addData}>
+            Add Items
+          </button>
+          <button type="submit" onClick={clearHandler}>
+            clear
+          </button>
+        </div>
       </form>
       <div>
         {error && (!itemName || !datetime || !description) && (

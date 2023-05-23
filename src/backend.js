@@ -8,7 +8,6 @@ export const postData = async (itemName, price, datetime, description) => {
     });
     result = await result.json();
     return result.status
-    console.log(result);
 }
 
 export const getData = async () => {
@@ -23,3 +22,12 @@ export const getData = async () => {
     return data;
 };
 
+
+export const deleteData = async (req, res) => {
+    const data = await fetch('http://localhost:5000/api/moneyTracker', {
+        method: 'DELETE',
+        headers: {
+            "Content-type": "application/json"
+        }
+    })
+}
